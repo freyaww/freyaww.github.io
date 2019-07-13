@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          流体布局与BFC特性生成的多栏布局 - Freya的博客 | Freya&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://freyawang.me/2018/01/19/流体布局与BFC生成的两（多）栏布局/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">FFFussed</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Image to hack wechat -->
+<!-- <img src="https://freyawang.me/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/post-bg-css.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#css" title="css">css</a>
+                        
+                          <a class="tag" href="/tags/#布局" title="布局">布局</a>
+                        
+                          <a class="tag" href="/tags/#BFC" title="BFC">BFC</a>
+                        
+                    </div>
+                    <h1>流体布局与BFC特性生成的多栏布局</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by Freya on
+                        2018-01-19
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="一、流体布局"><a href="#一、流体布局" class="headerlink" title="一、流体布局"></a>一、流体布局</h1><h2 id="1-通俗解释"><a href="#1-通俗解释" class="headerlink" title="1.通俗解释"></a>1.通俗解释</h2><p><strong>流体布局</strong>，通俗解释就是：在正常情况下（非浮动、绝对定位）,水平方向会自动填满容器宽度。当设置margin-left/right、padding-left/right、border-left/right-width时，实际的内容区域（content）就像装在容器中的水一样，会相应变窄（当属性值为负数时会变宽），以自动填满剩余空间。</p>
+<h2 id="2-流体布局与自适应两栏布局"><a href="#2-流体布局与自适应两栏布局" class="headerlink" title="2.流体布局与自适应两栏布局"></a>2.流体布局与自适应两栏布局</h2><p>使用破坏属性，如浮动\绝对定位。</p>
+<h3 id="2-1浮动"><a href="#2-1浮动" class="headerlink" title="2.1浮动"></a>2.1浮动</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="css"><span class="selector-class">.left</span> &#123;</span></span><br><span class="line">  float: left;</span><br><span class="line">  width: 300px;</span><br><span class="line">&#125;</span><br><span class="line"><span class="css"><span class="selector-class">.right</span> &#123;</span></span><br><span class="line">  margin-left: 300px;</span><br><span class="line">&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"father"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"left"</span>&gt;</span>浮动元素<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"right"</span>&gt;</span>【自适应元素】在浩瀚的大海深处，有个鱼儿的王国。海王有6个美丽的女儿......</span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2绝对定位"><a href="#2-2绝对定位" class="headerlink" title="2.2绝对定位"></a>2.2绝对定位</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="css"><span class="selector-class">.father</span> &#123;</span></span><br><span class="line">    position: relative;</span><br><span class="line">&#125;</span><br><span class="line"><span class="css"><span class="selector-class">.left</span> &#123;</span></span><br><span class="line">  position: absolute;</span><br><span class="line">  top: 0;</span><br><span class="line">  left: 0;</span><br><span class="line">  width: 300px;</span><br><span class="line">&#125;</span><br><span class="line"><span class="css"><span class="selector-class">.right</span> &#123;</span></span><br><span class="line">  margin-left: 300px;</span><br><span class="line">&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"father"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"left"</span>&gt;</span>浮动元素<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"right"</span>&gt;</span>【自适应元素】在浩瀚的大海深处，有个鱼儿的王国。海王有6个美丽的女儿......</span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3效果"><a href="#2-3效果" class="headerlink" title="2.3效果"></a>2.3效果</h3><p><img src="quiver-image-url/41755E0F9E5FBF3CEA37314DB135E460.png" alt="屏幕快照 2019-07-01 下午10.21.49.png"></p>
+<h2 id="3-问题"><a href="#3-问题" class="headerlink" title="3.问题"></a>3.问题</h2><ol>
+<li>需提前知道浮动元素或绝对定位元素的尺寸，然后流体内容容器才能设置对应的margin/padding/border值进行位置修正；</li>
+<li>不同场景的留白距离是不一样的，所以无法使用一个公用的类名（类似.clearfix）。</li>
+</ol>
+<h1 id="二、BFC"><a href="#二、BFC" class="headerlink" title="二、BFC"></a>二、BFC</h1><h2 id="1-BFC原则"><a href="#1-BFC原则" class="headerlink" title="1.BFC原则"></a>1.BFC原则</h2><p><strong>BFC（块级格式化上下文）</strong>，只需知道触发容器的BFC后，这个容器就是一个完全密闭的盒子，无论盒子里发生什么（即使是原子弹爆炸），都不会影响到外面。所以可以避免margin穿透，内部清除浮动等。<br>触发BFC有四种方式：</p>
+<ol>
+<li>position: 除static和relative</li>
+<li>display: table-cell / inline-block / table-caption</li>
+<li>float: 不为none</li>
+<li>overflow: auto / scroll / hidden</li>
+</ol>
+<p>BFC特性有很多，但这里我们只讨论和float做兄弟时的表现。<br>若是前面讲到的流体布局div，和float做兄弟时，是覆盖的关系（如文字环绕效果）。而触发div BFC之后，就变成密闭的盒子，不会和浮动元素重叠，此时不会和浮动元素有任何交集，会顺着浮动元素的边缘形成自己的上下文，是块级相邻的效果。<br>但其流体特性并没有改变，也就是说它自动退避浮动元素宽度的距离，且在布局的水平方向上上会自动去填满除浮动元素内容以外的剩余空间。(理论上，我们需要，但不同的触发方式会有不同的表现，稍后讨论)</p>
+<p>前面提到，使用流体布局设置自适应两栏布局时需要提前知道浮动或绝对定位元素的尺寸，且不能使用公用的类名来设置样式。<br>而利用BFC，就能有效避免这些问题。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="css"><span class="selector-class">.left</span><span class="selector-class">.float</span> &#123;</span></span><br><span class="line">    float: left;</span><br><span class="line">    width: 300px;</span><br><span class="line">    height: 50px;</span><br><span class="line">&#125;</span><br><span class="line"><span class="css"><span class="selector-class">.right</span> &#123;</span></span><br><span class="line">    overflow: hidden;</span><br><span class="line">&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"father"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"left float"</span>&gt;</span>浮动元素<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"right"</span>&gt;</span></span><br><span class="line">      【自适应元素】 在浩瀚的大海深处，有个鱼儿的王国。海王有6个美丽的女儿......</span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="2-BFC和自适应两栏布局-模块间的间距设置"><a href="#2-BFC和自适应两栏布局-模块间的间距设置" class="headerlink" title="2.BFC和自适应两栏布局 模块间的间距设置"></a>2.BFC和自适应两栏布局 模块间的间距设置</h2><p>如果不设置边距，那两个模块就会挨在一起，很丑。所以要设置一个间距。<br>如果给BFC模块设置margin-left，就会出现同流体布局一样的问题（需要提前知道浮动元素的宽度，不够通用）。<br>这时应给浮动元素设置margin-right或padding，或者给BFC元素设置padding。</p>
+<h2 id="3-与纯流体布局相比的优势"><a href="#3-与纯流体布局相比的优势" class="headerlink" title="3.与纯流体布局相比的优势"></a>3.与纯流体布局相比的优势</h2><p>BFC自适应布局的优势：</p>
+<ol>
+<li>自适应内容由于封闭，更健壮，容错性强。比方说，内部clear:both不会与兄弟float产生矛盾。而流体布局，clear:both会让后面内容无法和float元素在一个水平上，产生布局问题。</li>
+<li>自适应内容自动填满浮动以外的区域，而无需关心浮动元素的宽度，可以整站大规模应用。而流体布局，需要大小不确定的margin/padding/border等值撑开合适间距，无法CSS组件化。</li>
+</ol>
+<h2 id="4-BFC家族与自适应布局"><a href="#4-BFC家族与自适应布局" class="headerlink" title="4.BFC家族与自适应布局"></a>4.BFC家族与自适应布局</h2><p>理论上，任何BFC元素和浮动搞基的时候，都可以实现自动填充（流体特性）的自适应布局。但是，由于大多数触发BFC的CSS属性自身会有一些其他特性，所以，实际操作时，能兼顾流体特性和BFC特性来实现无敌自适应布局的属性并不多。</p>
+<h3 id="4-1-float-left-right"><a href="#4-1-float-left-right" class="headerlink" title="4.1 float: left/right"></a>4.1 float: left/right</h3><p>设置浮动会触发元素本身BFC，但浮动属性属于破坏属性，会破坏块级元素本身的流体自适应性且具有包裹性，所以不能用来实现自动填满容器的自适应布局。但是兼容性好。（实际上，float:left/right就是一个多加了方向的display:inline-box;）</p>
+<h3 id="4-2-position-absolute"><a href="#4-2-position-absolute" class="headerlink" title="4.2 position: absolute"></a>4.2 position: absolute</h3><p>严重脱离文档流。</p>
+<h3 id="4-3-overflow-hidden"><a href="#4-3-overflow-hidden" class="headerlink" title="4.3 overflow: hidden"></a>4.3 overflow: hidden</h3><p>溢出剪裁，但不影响块级元素本身的属性，保留了元素自身的流体自适应特性。但是因为很多场景是不能使用的，所以无法整站CSS组件化，只能在局部（确定不会出现溢出剪裁的情况下）使用。<br><strong>（overflow:hidden配合height一起时，才会被剪裁）</strong></p>
+<h3 id="4-4-display-inline-block"><a href="#4-4-display-inline-block" class="headerlink" title="4.4 display: inline-block"></a>4.4 display: inline-block</h3><p>这个属性会让元素尺寸包裹收缩（会跟随内部元素的宽度显示），不能水平宽度自适应。<br>但是在IE6/IE7中，对块级元素设置该属性仍会保留流体自适应特性。</p>
+<h3 id="4-5-display-table-cell"><a href="#4-5-display-table-cell" class="headerlink" title="4.5 display: table-cell"></a>4.5 display: table-cell</h3><p>让元素表现得像单元格一样，IE8+。它同display: inline-block一样会包裹收缩。但是，单元格有个神奇的特性：无论你宽度值设置的多大，实际宽度也不会超过父容器的宽度。<br>所以这里我们可以把display: table-cell这个BFC元素宽度设置的非常大，如3000px。若父元素100%，那其实就跟块级元素的水平自适应效果一样了。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.float-left</span> &#123;</span><br><span class="line">    <span class="attribute">float</span>: left;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.bfc-content</span> &#123;</span><br><span class="line">    <span class="attribute">display</span>: table-cell;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">3000px</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但有两点制约：</p>
+<ol>
+<li>只适用于IE8+</li>
+<li>应付连续英文字符换行有些吃力（可以嵌套table-layout:fixed解决）。但是，总体来看，适用的场景要比overflow: hidden更广。</li>
+</ol>
+<h3 id="4-6-display-table-row"><a href="#4-6-display-table-row" class="headerlink" title="4.6 display: table-row"></a>4.6 display: table-row</h3><p>不能感应width，不能自适应剩余容器空间。</p>
+<h3 id="4-7-display：table-caption"><a href="#4-7-display：table-caption" class="headerlink" title="4.7 display：table-caption"></a>4.7 display：table-caption</h3><p>一无是处……</p>
+<h3 id="总结：对BFC家族大致过了一遍后，能担任自适应布局重任的："><a href="#总结：对BFC家族大致过了一遍后，能担任自适应布局重任的：" class="headerlink" title="总结：对BFC家族大致过了一遍后，能担任自适应布局重任的："></a>总结：对BFC家族大致过了一遍后，能担任自适应布局重任的：</h3><ol>
+<li><code>overflow: auto/hidden</code>   IE7+</li>
+<li><code>display: inline-block</code>   IE6/IE7</li>
+<li><code>display: table-cell</code>     IE8+</li>
+</ol>
+<p>但是由于overflow会出现溢出剪裁和滚动条等隐患，不适合作为整站通用类，所以，最适用与两栏/多栏自适应布局的通用类语句是（block水平元素，需配合浮动）</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.cell</span> &#123;</span><br><span class="line">    <span class="attribute">display</span>: table-cell;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">9999px</span>;</span><br><span class="line">    *<span class="attribute">display</span>: inline-block; </span><br><span class="line">    *<span class="attribute">width</span>: auto;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为和浮动元素合作，所以需要清除浮动。</p>
+<p>参考：<a href="http://www.zhangxinxu.com/wordpress/?p=4588" target="_blank" rel="noopener">《CSS深入理解流体特性和BFC特性下多栏自适应布局》</a></p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2018/09/13/实现call-apply-bind/" data-toggle="tooltip" data-placement="top" title="实现call/apply/bind">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2017/11/07/深入this/" data-toggle="tooltip" data-placement="top" title="深入this">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#css" title="css">css</a>
+                        
+                          <a class="tag" href="/tags/#布局" title="布局">布局</a>
+                        
+                          <a class="tag" href="/tags/#BFC" title="BFC">BFC</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/xxwzt">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/Freyaww">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; FFFussed 2019 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://freyawang.me/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://freyawang.me/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

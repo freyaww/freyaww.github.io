@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          深入this - Freya的博客 | Freya&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://freyawang.me/2017/11/07/深入this/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">FFFussed</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Image to hack wechat -->
+<!-- <img src="https://freyawang.me/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#JavaScript" title="JavaScript">JavaScript</a>
+                        
+                          <a class="tag" href="/tags/#this" title="this">this</a>
+                        
+                    </div>
+                    <h1>深入this</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by Freya Wang on
+                        2017-11-07
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <blockquote>
+<p>从基本概念入手，深入this指向问题。</p>
+</blockquote>
+<br>
+
+<h1 id="导航"><a href="#导航" class="headerlink" title="导航"></a>导航</h1><p><a href="#concept">一、一些概念</a><br><a href="#function">二、函数</a><br><a href="#details">三、细说this在各场景中的指向</a><br><a href="#apply&call">补充：apply() &amp; call()</a></p>
+<h1 id="一、一些概念"><a href="#一、一些概念" class="headerlink" title=" 一、一些概念"></a><a name="concept"> 一、一些概念</a></h1><h2 id="1-1执行环境"><a href="#1-1执行环境" class="headerlink" title="1.1执行环境"></a>1.1执行环境</h2><p>执行环境（execution context）是JavaScript中最为重要的一个概念。<em>执行环境</em> 定义了 <strong>变量</strong> 或 <strong>函数</strong> 有权访问的其他数据，决定了它们各自的目的。<br>某个执行环境中的所有代码执行完毕后，该环境被销毁，保存在其中的所有变量和函数定义也随之销毁。</p>
+<blockquote>
+<p>ES6中新增块级作用域，即花括号封闭的代码块也有自己的执行环境。</p>
+</blockquote>
+<h2 id="1-2全局执行环境"><a href="#1-2全局执行环境" class="headerlink" title="1.2全局执行环境"></a>1.2全局执行环境</h2><p><em>全局执行环境</em> 是最外围的一个执行环境。根据ECMAScript实现所在的宿主环境不同，表示执行环境的对象也不一样。在web浏览器中，全局执行环境就是window对象，因此所有全局变量和函数都是作为window对象的属性和方法创建的。<br>全局执行环境直到应用程序退出（如关闭浏览器）时才会被销毁。</p>
+<h2 id="1-3环境栈"><a href="#1-3环境栈" class="headerlink" title="1.3环境栈"></a>1.3环境栈</h2><p>每个函数都有自己的执行环境。当执行流进入一个函数时，<strong>函数的执行环境</strong> 就会被推入一个 <em>环境栈</em> 中。而在函数执行之后，栈将其环境弹出，把控制权返回给之前的执行环境。<br>ECMAScript程序中的执行流正是由这个方便的机制控制着。</p>
+<h2 id="1-4变量对象"><a href="#1-4变量对象" class="headerlink" title="1.4变量对象"></a>1.4变量对象</h2><p>每个执行环境中都有一个与之相关的变量对象，环境中定义的所有变量和函数都保存在这个变量对象中。编程者编程时无法访问这个对象，但解析器在处理数据时会在后台使用它。</p>
+<h2 id="1-5作用域链"><a href="#1-5作用域链" class="headerlink" title="1.5作用域链"></a>1.5作用域链</h2><p>作用域链本质上是一个指向变量对象的指针列表，它只引用但不实际包含变量对象。<br>当代码在一个环境中执行时，会创建 <strong>变量对象</strong> 的一个 <em>作用域链（scope chain）</em>。作用域链是为了保证对执行环境<strong>有权</strong>访问的所有变量和函数的<strong>有序</strong>访问。<br>作用域链的前端始终是当前执行的代码所在环境的变量对象。如果这个执行环境是函数，则将其活动对象（activation object）作为变量对象。<br><em>活动对象</em>在最开始时只包含一个变量，即arguments对象（这个对象在全局执行环境中是不存在的）。作用域链中的下一个变量对象来自包含（外部）执行环境，再下一个变量对象则来自下一个包含环境。这样，一直延续到全局执行环境；全局执行环境的变量对象始终都是作用域链中的最后一个对象。</p>
+<h2 id="1-6标识符解析"><a href="#1-6标识符解析" class="headerlink" title="1.6标识符解析"></a>1.6标识符解析</h2><p><em>标识符解析</em> 是沿着作用域链一级一级地搜索标识符的过程。搜索过程始终从作用域链的最前端开始，然后逐级地向后回溯，直至找到标识符为止（如果找不到标识符，通常会导致错误发生）<br><br></p>
+<h1 id="二、函数"><a href="#二、函数" class="headerlink" title="二、函数"></a><a name="function">二、函数</a></h1><h2 id="2-1-定义"><a href="#2-1-定义" class="headerlink" title="2.1 定义"></a>2.1 定义</h2><p>可以封装任意多条语句，而且可以在任何时候调用执行。</p>
+<h2 id="2-2-函数内部属性"><a href="#2-2-函数内部属性" class="headerlink" title="2.2 函数内部属性"></a>2.2 函数内部属性</h2><p>在函数内部，有两个特殊的对象：arguments和this。其中，<em>arguments</em> 是一个<span style="color: pink;">类</span>数组对象，包含着传入函数中的所有参数。</p>
+<blockquote>
+<p>对arguments调用数组方法时(如sort())，要先转化为数组对象再调用方法。<br><code>Array.prototype.slice.call(arguments).sort();</code></p>
+</blockquote>
+<p><strong><em>this</em>引用的是函数执行的环境对象，或者也可以说是this值（当在网页的全局作用域中调用函数时，this对象引用的就是window对象）。</strong>在调用<strong>普通函数</strong>（匿名函数情况特殊，见2.3小节）之前，this的值并不是确定的，因此this可能会在代码执行过程中引用不同的对象，即：<strong><span style="color: pink;">this对象是在运行时基于函数的执行环境绑定的</span>，在全局函数中，this等于window，而当函数被作为某个对象的方法调用时，this等于那个对象</strong>。</p>
+<figure class="highlight qml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="built_in">window</span>.color = <span class="string">"red"</span>;</span><br><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">  <span class="attribute">color</span>: <span class="string">"blue"</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sayColor</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> <span class="built_in">color</span> = <span class="string">"green"</span>;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="keyword">this</span>.color);</span><br><span class="line">&#125;</span><br><span class="line">sayColor();       <span class="comment">// "red"</span></span><br><span class="line"></span><br><span class="line">obj.sayColor = sayColor;</span><br><span class="line">obj.sayColor();   <span class="comment">//"blue"</span></span><br></pre></td></tr></table></figure>
+
+<p>上面这个函数<code>sayColor</code>是在全局作用域下定义的，它引用了this对象。<br>当在全局作用域中调用<code>sayColor()</code>时，this引用的是全局对象window；换句话说，对<code>this.color</code>求值会转换成对<code>window.color</code>求值，于是结果返回了“red”。<br>而当把这个函数赋给对象obj并调用<code>obj.sayColor</code>时，this引用的是对象obj，因此对<code>this.color</code>求值会转换成对obj.color求值，结果就返回了“blue”。</p>
+<blockquote>
+<p>虽然<code>sayColor</code>函数中还定义了一个color变量，但是因为this所指向是调用该函数的对象，即其执行时的执行环境，所以<code>this.color</code>始终不会等于“green”。</p>
+</blockquote>
+<blockquote>
+<p>函数的名字仅仅是一个包含指针的变量而已。因此，即使是在不同的环境中执行，全局的<code>sayColor()</code>函数和<code>obj.sayColor</code>指向的仍然是同一个函数。</p>
+</blockquote>
+<h2 id="2-3-匿名函数中的this"><a href="#2-3-匿名函数中的this" class="headerlink" title="2.3 匿名函数中的this"></a>2.3 匿名函数中的this</h2><p>匿名函数的执行环境具有全局性（不管所处在什么位置），因此其this对象通常指向window（但在通过<code>call()</code>或<code>apply()</code>改变函数执行环境的情况下，this就会指向其他对象。）<br><br></p>
+<h1 id="三、细说this在各场景中的指向"><a href="#三、细说this在各场景中的指向" class="headerlink" title="三、细说this在各场景中的指向"></a><a name="details">三、细说this在各场景中的指向</a></h1><p>在非箭头函数下，this指向调用其所在函数的对象，而且是离谁近就是指向谁（此对于常规对象，原型链， getter &amp; setter等都适用）；构造函数下，this与被创建的新对象绑定；DOM事件，this指向触发事件的元素；内联事件分两种情况，bind绑定， call &amp; apply 方法等， 容以下一步一步讨论。箭头函数也会穿插其中进行讨论。</p>
+<h2 id="3-1-全局环境下"><a href="#3-1-全局环境下" class="headerlink" title="3.1 全局环境下"></a>3.1 全局环境下</h2><p>在全局环境下，this 始终指向全局对象（window）, 无论是否严格模式；</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="number">1</span>;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">this</span>);       <span class="comment">//window</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">this</span>.a);     <span class="comment">//1</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="3-2-函数上下文调用"><a href="#3-2-函数上下文调用" class="headerlink" title="3.2 函数上下文调用"></a>3.2 函数上下文调用</h2><h3 id="3-2-1-普通函数调用this"><a href="#3-2-1-普通函数调用this" class="headerlink" title="3.2.1 普通函数调用this"></a>3.2.1 普通函数调用this</h3><p>上文提到过，<strong>this对象是在运行时基于函数的执行环境绑定的，在全局函数中，this等于window，而当函数被作为某个对象的方法调用时，this等于那个对象</strong>。</p>
+<blockquote>
+<p>在全局执行环境下调用函数，分为两种情况：严格模式和非严格模式。<br>非严格模式下，this 默认指向全局对象window。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash"><span class="keyword">function</span> <span class="function"><span class="title">foo</span></span>() &#123;</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">   console.log(this);</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&#125;</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">foo();      //window</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"></span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<p>严格模式下，this等于undefined。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash"><span class="keyword">function</span> <span class="function"><span class="title">foo</span></span>() &#123;</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">   <span class="string">"use strict"</span>;          //严格模式</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">   console.log(this);</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&#125;</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">foo();                  //undefined</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"></span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<h3 id="3-2-2-匿名函数中的this"><a href="#3-2-2-匿名函数中的this" class="headerlink" title="3.2.2 匿名函数中的this"></a>3.2.2 匿名函数中的this</h3><p><strong>匿名函数的执行环境具有全局性，因此其this对象通常指向window。</strong><br>（但在通过<code>call()</code>或<code>apply()</code>改变函数执行环境的情况下，this就会指向其他对象。）</p>
+<h2 id="3-3-原型链中的this"><a href="#3-3-原型链中的this" class="headerlink" title="3.3 原型链中的this"></a>3.3 原型链中的this</h2><p>原型链中的方法的this仍然指向调用它的对象，与普通讨论一致。</p>
+<h2 id="3-4-构造函数中的this"><a href="#3-4-构造函数中的this" class="headerlink" title="3.4 构造函数中的this"></a>3.4 构造函数中的this</h2><p>构造函数中的this与被创建的新对象绑定。</p>
+<blockquote>
+<p>当构造器返回的默认值是一个this引用的对象时，可以手动设置返回其他的对象，如果返回值不是一个对象，返回this。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&gt;<span class="function"><span class="keyword">function</span> <span class="title">C</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">&gt;   <span class="keyword">this</span>.a = <span class="number">1</span>;</span><br><span class="line">&gt;&#125;</span><br><span class="line">&gt;</span><br><span class="line">&gt;<span class="keyword">var</span> c = <span class="keyword">new</span> C();</span><br><span class="line">&gt;<span class="built_in">console</span>.log(c.a);       <span class="comment">//1</span></span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt;<span class="function"><span class="keyword">function</span> <span class="title">C2</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">&gt;   <span class="keyword">this</span>.a = <span class="number">2</span>;</span><br><span class="line">&gt;   <span class="keyword">return</span> &#123;<span class="attr">a</span>: <span class="number">3</span>&#125;;         <span class="comment">//手动设置返回其他对象，这时第二行的this.a没有也行</span></span><br><span class="line">&gt;&#125;</span><br><span class="line">&gt;</span><br><span class="line">&gt;<span class="keyword">var</span> c2 = <span class="keyword">new</span> C2();</span><br><span class="line">&gt;<span class="built_in">console</span>.log(c2.a);       <span class="comment">//3</span></span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h2 id="3-5-call-amp-apply"><a href="#3-5-call-amp-apply" class="headerlink" title="3.5 call &amp; apply"></a>3.5 call &amp; apply</h2><p>当函数通过Function对象的原型中继承的方法 <code>call()</code> 和 <code>apply()</code> 方法调用时， 其函数内部的this值可绑定到 <code>call()</code> &amp; <code>apply()</code> 方法指定的第一个对象上，如果第一个参数不是对象，JavaScript内部会尝试将其转换成对象然后指向它。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">add</span><span class="params">(c, d)</span></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> this.a + this.b + c + d;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var o = &#123;a:<span class="number">1</span>, b:<span class="number">3</span>&#125;;</span><br><span class="line"></span><br><span class="line">add.call(o, <span class="number">5</span>, <span class="number">7</span>); // <span class="number">1</span> + <span class="number">3</span> + <span class="number">5</span> + <span class="number">7</span> = <span class="number">16</span></span><br><span class="line"></span><br><span class="line">add.apply(o, [<span class="number">10</span>, <span class="number">20</span>]); // <span class="number">1</span> + <span class="number">3</span> + <span class="number">10</span> + <span class="number">20</span> = <span class="number">34</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">tt</span><span class="params">()</span></span> &#123;</span><br><span class="line">  console.<span class="built_in">log</span>(this);</span><br><span class="line">&#125;</span><br><span class="line">// 返回对象见下图（图<span class="number">1</span>）</span><br><span class="line">tt.call(<span class="number">5</span>);  // Number &#123;<span class="string">[[PrimitiveValue]]</span>: <span class="number">5</span>&#125; </span><br><span class="line">tt.call(<span class="string">'asd'</span>); // String &#123;<span class="number">0</span>: <span class="string">"a"</span>, <span class="number">1</span>: <span class="string">"s"</span>, <span class="number">2</span>: <span class="string">"d"</span>, length: <span class="number">3</span>, <span class="string">[[PrimitiveValue]]</span>: <span class="string">"asd"</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="quiver-image-url/6FCB066E79387F52EE678CDF11FCA9A6.jpg" alt="IMAGE"></p>
+<h2 id="3-6-bind-方法"><a href="#3-6-bind-方法" class="headerlink" title="3.6 bind 方法"></a>3.6 bind 方法</h2><p>bind方法在ES5引入，在Function的原型链上，<code>Function.prototype.bind</code>。bind方法会创建一个新方法，通过bind方法绑定后，函数将被永远绑定在其第一个参数对象上，而无论其在什么情况下被调用。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>.a;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> g = f.bind(&#123;<span class="attr">a</span>:<span class="string">"azerty"</span>&#125;);</span><br><span class="line"><span class="built_in">console</span>.log(g()); <span class="comment">// azerty</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> o = &#123;<span class="attr">a</span>:<span class="number">37</span>, <span class="attr">f</span>:f, <span class="attr">g</span>:g&#125;;</span><br><span class="line"><span class="built_in">console</span>.log(o.f(), o.g()); <span class="comment">// 37, azerty</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="3-7-DOM-事件处理函数中的-this"><a href="#3-7-DOM-事件处理函数中的-this" class="headerlink" title="3.7 DOM 事件处理函数中的 this"></a>3.7 DOM 事件处理函数中的 this</h2><p>当函数被当做监听事件处理函数时，其this指向触发该事件的元素（针对于addEventListener事件）</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 被调用时，将关联的元素变成蓝色</span></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">bluify</span>(<span class="params">e</span>)</span>&#123;</span><br><span class="line">      <span class="comment">//在控制台打印出所点击元素</span></span><br><span class="line">      <span class="built_in">console</span>.log(<span class="keyword">this</span>);</span><br><span class="line">      <span class="comment">//阻止时间冒泡</span></span><br><span class="line">      e.stopPropagation();</span><br><span class="line">      <span class="comment">//阻止元素的默认事件</span></span><br><span class="line">      e.preventDefault();      </span><br><span class="line">      <span class="keyword">this</span>.style.backgroundColor = <span class="string">'#A5D9F3'</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取文档中的所有元素的列表</span></span><br><span class="line">    <span class="keyword">var</span> elements = <span class="built_in">document</span>.getElementsByTagName(<span class="string">'*'</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 将bluify作为元素的点击监听函数，当元素被点击时，就会变成蓝色</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> i=<span class="number">0</span> ; i&lt;elements.length ; i++)&#123;</span><br><span class="line">      elements[i].addEventListener(<span class="string">'click'</span>, bluify, <span class="literal">false</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-8-内联事件中的-this"><a href="#3-8-内联事件中的-this" class="headerlink" title="3.8 内联事件中的 this"></a>3.8 内联事件中的 this</h2><p>内联事件中的this指向分两种情况：</p>
+<ol>
+<li>当代码被内联处理函数调用时，它的this指向监听器所在的DOM元素。</li>
+<li>当代码被包括在函数内部执行时，其this指向等同于 <strong><strong>函数直接调用</strong></strong> 的情况，即在非严格模式指向全局对象window， 在严格模式指向undefined。</li>
+</ol>
+<p><img src="quiver-image-url/703FE7F069317A80B06DCBE4CCC2183B.jpg" alt="IMAGE"><br><img src="quiver-image-url/D2C4EFFBBE60F78093D8C391102F5087.jpg" alt="IMAGE"><br><img src="quiver-image-url/1161E81385913393A7A4CDBDC4E446AF.jpg" alt="IMAGE"></p>
+<h2 id="3-9-setTimeout-amp-setInterval"><a href="#3-9-setTimeout-amp-setInterval" class="headerlink" title="3.9 setTimeout &amp; setInterval"></a>3.9 setTimeout &amp; setInterval</h2><p>对于延时函数内部的回调函数的this指向全局对象window（当然我们可以通过bind方法改变其内部函数的this指向）</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//默认情况下代码</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Person</span>(<span class="params"></span>) </span>&#123;  </span><br><span class="line">    <span class="keyword">this</span>.age = <span class="number">0</span>;  </span><br><span class="line">    setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="keyword">this</span>);</span><br><span class="line">    &#125;, <span class="number">3000</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> p = <span class="keyword">new</span> Person();<span class="comment">//3秒后返回 window 对象</span></span><br><span class="line">==============================================</span><br><span class="line"><span class="comment">//通过bind绑定</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Person</span>(<span class="params"></span>) </span>&#123;  </span><br><span class="line">    <span class="keyword">this</span>.age = <span class="number">0</span>;  </span><br><span class="line">    setTimeout((<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="keyword">this</span>);</span><br><span class="line">    &#125;).bind(<span class="keyword">this</span>), <span class="number">3000</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> p = <span class="keyword">new</span> Person();<span class="comment">//3秒后返回构造函数新生成的对象 Person&#123;...&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="quiver-image-url/7B1BCF07AA28DD3AAA41BAA0C0DF176E.jpg" alt="IMAGE"><br><img src="quiver-image-url/D213180B8E3608C3189B8D68CB580B24.jpg" alt="IMAGE"></p>
+<h2 id="3-10-箭头函数中的-this"><a href="#3-10-箭头函数中的-this" class="headerlink" title="3.10 箭头函数中的 this"></a>3.10 箭头函数中的 this</h2><p>箭头函数是没有this对象的，它内部使用的this是由定义它的宿主对象决定的。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> message = <span class="string">"Hello!"</span>;</span><br><span class="line"><span class="keyword">var</span> app = <span class="keyword">new</span> Vue(&#123;</span><br><span class="line">    el:<span class="string">"#app"</span>,</span><br><span class="line">    data:&#123;</span><br><span class="line">        message: <span class="string">"你好！"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    created: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="keyword">this</span>.showMessage1();    <span class="comment">//this1</span></span><br><span class="line">      <span class="keyword">this</span>.showMessage2();   <span class="comment">//this2</span></span><br><span class="line">    &#125;,</span><br><span class="line">    methods:&#123;</span><br><span class="line">        showMessage1:<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">            setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">               <span class="built_in">document</span>.getElementById(<span class="string">"id1"</span>).innerText = <span class="keyword">this</span>.message; <span class="comment">//this3</span></span><br><span class="line">            &#125;, <span class="number">10</span>)</span><br><span class="line">        &#125;,</span><br><span class="line">        showMessage2:<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">               <span class="built_in">document</span>.getElementById(<span class="string">"id2"</span>).innerText = <span class="keyword">this</span>.message; <span class="comment">//this4</span></span><br><span class="line">            &#125;, <span class="number">10</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>这是一个Vue实例。<br>this4中的this.message等于Vue实例的message“你好”，因为匿名函数是没有this的，而定义它的宿主环境是Vue（注意不是methods对象，在Vue创建实例时创建方法实际上创建Vue实例的属性。）</p>
+<h2 id="3-11-Vue中的this"><a href="#3-11-Vue中的this" class="headerlink" title="3.11 Vue中的this"></a>3.11 Vue中的this</h2><p>Vue的生命周期钩子函数内的this即指向Vue实例。<br>Vue methods内的各种普通函数中的this指向window对象。（所以为了维持this会var that = this，that指向Vue实例。）<br>箭头函数指向Vue实例。<br>延迟函数指向window。<br><br></p>
+<h1 id="补充：apply-amp-call"><a href="#补充：apply-amp-call" class="headerlink" title="补充：apply() &amp; call()"></a><a name="apply&call">补充：apply() &amp; call()</a></h1><h2 id="4-1-apply"><a href="#4-1-apply" class="headerlink" title="4.1 apply()"></a>4.1 apply()</h2><p>apply定义：调用一个对象的一个方法，用另一个对象替换当前对象。<br>例如：<code>b.apply(a, arguments);</code> 对象a应用对象b的方法。</p>
+<h2 id="4-2-call"><a href="#4-2-call" class="headerlink" title="4.2 call()"></a>4.2 call()</h2><p>call：调用一个对象的一个方法，用另一个对象替换当前对象。例如：B.call(A, args1,args2);即A对象调用B对象的方法。</p>
+<h2 id="4-3-二者比较"><a href="#4-3-二者比较" class="headerlink" title="4.3 二者比较"></a>4.3 二者比较</h2><h3 id="4-3-1-不同"><a href="#4-3-1-不同" class="headerlink" title="4.3.1 不同"></a>4.3.1 不同</h3><p>apply：最多只能有两个参数——新this对象和一个数组argArray。如果给该方法传递多个参数，则把参数都写进这个数组里面，当然，即使只有一个参数，也要写进数组里。如果argArray不是一个有效的数组或arguments对象，那么将导致一个TypeError。如果没有提供argArray和thisObj任何一个参数，那么Global对象将被用作thisObj，并且无法被传递任何参数。</p>
+<p>call：它可以接受多个参数，第一个参数与apply一样，后面则是一串参数列表。这个方法主要用在js对象各方法相互调用的时候，使当前this实例指针保持一致，或者在特殊情况下需要改变this指针。如果没有提供thisObj参数，那么 Global 对象被用作thisObj。 </p>
+<h3 id="4-3-2-相同"><a href="#4-3-2-相同" class="headerlink" title="4.3.2 相同"></a>4.3.2 相同</h3><p>都“可以用来代替另一个对象调用一个方法，将一个函数的对象上下文从初始的上下文改变为由thisObj指定的新对象”。</p>
+<h3 id="4-3-3-总结"><a href="#4-3-3-总结" class="headerlink" title="4.3.3 总结"></a>4.3.3 总结</h3><p>apply和call的功能是一样的，只是传入的参数列表形式不同。</p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2018/01/19/流体布局与BFC生成的两（多）栏布局/" data-toggle="tooltip" data-placement="top" title="流体布局与BFC特性生成的多栏布局">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                </ul>
+
+                
+
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#JavaScript" title="JavaScript">JavaScript</a>
+                        
+                          <a class="tag" href="/tags/#this" title="this">this</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/xxwzt">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/Freyaww">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; FFFussed 2019 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://freyawang.me/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://freyawang.me/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
