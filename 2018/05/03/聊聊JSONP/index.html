@@ -13,11 +13,11 @@
 
     <title>
         
-          About - Freya的博客 | Freya&#39;s Blog
+          聊聊JSONP - Freya的博客 | Freya&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="https://freyawang.me/about/">
+    <link rel="canonical" href="https://freyawang.me/2018/05/03/聊聊JSONP/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -147,149 +147,154 @@
 
 
     <!-- Main Content -->
-    <!-- Page Header -->
-<header class="intro-header" style="background-image: url('/img/about-bg.jpg')">
+    
+<!-- Image to hack wechat -->
+<!-- <img src="https://freyawang.me/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
-                <div class="site-heading">
-                    <h1>About</h1>
-                    <!--<hr class="small">-->
-                    <span class="subheading">Hey, this is Kaijun.</span>
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#JavaScript" title="JavaScript">JavaScript</a>
+                        
+                    </div>
+                    <h1>聊聊JSONP</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by Freya on
+                        2018-05-03
+                    </span>
                 </div>
             </div>
         </div>
     </div>
 </header>
 
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
 
-
-<!-- Main Content -->
-<div class="container">
-    <div class="row">
-        
-
-<!-- USE SIDEBAR -->
     <!-- Post Container -->
             <div class="
-                col-lg-8 col-lg-offset-1
-                col-md-8 col-md-offset-1
-                col-sm-12
-                col-xs-12
-                post-container
-            ">
-            
-                <blockquote>
-<p>世界那么大，多玩玩看看。</p>
-</blockquote>
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="jsonp"><a href="#jsonp" class="headerlink" title="jsonp"></a>jsonp</h1><h2 id="1-定义"><a href="#1-定义" class="headerlink" title="1.定义"></a>1.定义</h2><p>当用ajax进行跨域通信时，会出现错误：</p>
+<span style="color: red">
+XMLHttpRequest cannot load **"某个URL"**. No 'Access-Control-Allow-Origin' header is present on the requested resource. Origin 'http://localhost' is therefore not allowed access.</span>
+
+<p>💡💡💡这时就可以使用jsonp来解决跨域通信的问题啦！<br>先来看看JSONP是什么吧👇👇👇</p>
+<p>JSONP(JSON with Padding)是一种跨域请求方式。<br><strong>【主要原理】</strong><br>JSONP利用了<code>&lt;script&gt;</code>标签可以跨域请求的特性，由其<code>src</code>属性发送请求到服务器，服务器返回JavaScript代码，浏览器接受响应，然后就直接执行了，这和通过<code>&lt;script&gt;</code>标签引用外部文件的原理是一样的</p>
+<p><strong>【主要组成】</strong><br>JSONP由两部分组成：回调函数和数据。<br>回调函数一般是在浏览器控制，作为参数发往服务器端（当然，你也可以固定回调函数的名字，但客户端和服务器端的名称一定要一致）。当服务器响应时，服务器端就会把该函数和数据拼成<strong>字符串</strong>返回。 </p>
+<p><strong>【请求过程】</strong><br>JSONP的请求过程：<br><strong>请求阶段</strong>：浏览器创建一个<code>&lt;script&gt;</code>标签，并给其<code>src</code>赋值(类似<code>http://example.com/api/?callback=jsonpCallback</code>）。<br><strong>发送请求</strong>：当给<code>&lt;script&gt;</code>的<code>src</code>赋值时，浏览器就会发起一个请求。<br><strong>数据响应</strong>：服务端将要返回的数据作为参数和函数名称拼接在一起(格式类似<code>jsonpCallback({name: &#39;abc&#39;})</code>)返回。当浏览器接收到了响应数据，由于发起请求的是<code>script</code>，所以相当于直接调用<code>jsonpCallback方法</code>，并且传入了一个参数。</p>
+<h2 id="2-实现"><a href="#2-实现" class="headerlink" title="2.实现"></a>2.实现</h2><p>（jquery中、原生实现）<br>用原生JS实现JSONP非常简单，无非几点：<br>1）定义一个函数，用于处理接收到的跨域数据。<br>2）生成一个dom节点(script节点)，然后src属性上面记入发送的目的URL以及参数。<br>3）在跨域服务器端接收GET请求，返回数据（返回之前定义函数的调用的字符串）。<br>4）删除之前生成的script节点。</p>
 
 
-                <!-- 如果开启评论功能 -->
+                <hr>
+
                 
-                    <hr>
 
+                <ul class="pager">
                     
-
+                        <li class="previous">
+                            <a href="/2018/09/01/表单序列化/" data-toggle="tooltip" data-placement="top" title="表单序列化">&larr; Previous Post</a>
+                        </li>
                     
-
-
                     
-
+                        <li class="next">
+                            <a href="/2018/04/30/聊聊JSON/" data-toggle="tooltip" data-placement="top" title="聊聊JSON">Next Post &rarr;</a>
+                        </li>
                     
+                </ul>
 
-
+                
 
                 
 
             </div>
+    <!-- Side Catalog Container -->
+        
+
     <!-- Sidebar Container -->
+
             <div class="
-                col-lg-3 col-lg-offset-0
-                col-md-3 col-md-offset-0
-                col-sm-12
-                col-xs-12
-                sidebar-container
-            ">
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
                 <!-- Featured Tags -->
                 
                 <section>
                     <!-- no hr -->
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
-                        
-                            
-                            <a href="/tags/#JavaScript" title="JavaScript" rel="6">JavaScript</a>
-                            
-                        
-                            
-                        
-                            
-                        
-                            
-                        
-                            
-                        
-                            
+                       
+                          <a class="tag" href="/tags/#JavaScript" title="JavaScript">JavaScript</a>
                         
                     </div>
                 </section>
                 
 
-                <!-- Short About -->
-                <section class="visible-md visible-lg">
-                    <hr><h5><a href="/about/">ABOUT ME</a></h5>
-                    <div class="short-about">
-
-                        
-                            <img src="/img/avatar.jpg" />
-                        
-
-                        
-                            <p>哈哈哈哈哈哈</p>
-                        
-
-                        <!-- SNS Link -->
-                        <ul class="list-inline">
-                            
-                            
-                            
-
-                            
-                                <li>
-                                    <a target="_blank" href="http://weibo.com/undefined">
-                                        <span class="fa-stack fa-lg">
-                                            <i class="fa fa-circle fa-stack-2x"></i>
-                                            <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
-                                        </span>
-                                    </a>
-                                </li>
-                            
-
-                            
-
-                            
-                                <li>
-                                    <a target="_blank"  href="https://github.com/Freyaww">
-                                        <span class="fa-stack fa-lg">
-                                            <i class="fa fa-circle fa-stack-2x"></i>
-                                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                                        </span>
-                                    </a>
-                                </li>
-                            
-                            
-                            
-                            
-                        </ul>
-                    </div>
-                </section>
-                
                 <!-- Friends Blog -->
                 
             </div>
-        
+
+        </div>
     </div>
-</div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
 
 
     <!-- Footer -->

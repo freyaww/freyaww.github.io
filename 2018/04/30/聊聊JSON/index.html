@@ -13,11 +13,11 @@
 
     <title>
         
-          About - Freya的博客 | Freya&#39;s Blog
+          聊聊JSON - Freya的博客 | Freya&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="https://freyawang.me/about/">
+    <link rel="canonical" href="https://freyawang.me/2018/04/30/聊聊JSON/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -147,149 +147,156 @@
 
 
     <!-- Main Content -->
-    <!-- Page Header -->
-<header class="intro-header" style="background-image: url('/img/about-bg.jpg')">
+    
+<!-- Image to hack wechat -->
+<!-- <img src="https://freyawang.me/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
-                <div class="site-heading">
-                    <h1>About</h1>
-                    <!--<hr class="small">-->
-                    <span class="subheading">Hey, this is Kaijun.</span>
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#JavaScript" title="JavaScript">JavaScript</a>
+                        
+                    </div>
+                    <h1>聊聊JSON</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by Freya on
+                        2018-04-30
+                    </span>
                 </div>
             </div>
         </div>
     </div>
 </header>
 
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
 
-
-<!-- Main Content -->
-<div class="container">
-    <div class="row">
-        
-
-<!-- USE SIDEBAR -->
     <!-- Post Container -->
             <div class="
-                col-lg-8 col-lg-offset-1
-                col-md-8 col-md-offset-1
-                col-sm-12
-                col-xs-12
-                post-container
-            ">
-            
-                <blockquote>
-<p>世界那么大，多玩玩看看。</p>
-</blockquote>
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="json"><a href="#json" class="headerlink" title="json"></a>json</h1><h3 id="1-定义"><a href="#1-定义" class="headerlink" title="1.定义"></a>1.定义</h3><p>JSON是一种轻量级的数据交换格式。<br>是一种传递对象的语法，对象可以是name/value对，数组和其他对象。</p>
+<p>JSON 数据的书写格式是：名称/值对。<br>名称/值对组合中的名称写在前面（在双引号中），值对写在后面，中间用冒号隔开，<br>其中 值 可以是：数字（整数或浮点数）、字符串（在双引号中）、布尔值（true或false）、数组（在方括号中）、对象（在花括号中）、null</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"skillz"</span>: &#123;</span><br><span class="line">    <span class="attr">"web"</span>: [ </span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">"name"</span>: <span class="string">"html"</span>,</span><br><span class="line">        <span class="attr">"years"</span>: <span class="number">5</span>,</span><br><span class="line">        <span class="attr">"someBooleanValue"</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">"someArrayValue"</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line">      &#125;，</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">"name"</span>: <span class="string">"css"</span>,</span><br><span class="line">        <span class="attr">"years"</span>: <span class="number">3</span></span><br><span class="line">      &#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">"database"</span>: [</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">"name"</span>: <span class="string">"sql"</span>,</span><br><span class="line">        <span class="attr">"years"</span>: <span class="number">7</span></span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>【语法规则】<br>JSON 的语法规则十分简单，可称得上“优雅完美”，总结起来有：<br>数组（Array）用方括号(“[]”)表示。<br>对象（Object）用大括号（”{}”）表示。<br>名称/值对（name/value）组合成数组和对象。<br>名称（name）置于双引号中，值（value）有字符串、数值、布尔值、null、对象和数组。<br>并列的数据之间用逗号（“,”）分隔<br>【注意】<br>复合类型的值只能是数组或对象，不能是函数、正则表达式对象、日期对象。<br>简单类型的值只有四种：字符串、数值（必须以十进制表示）、布尔值和null（不能使用NaN, Infinity, -Infinity和undefined）。<br>字符串必须使用双引号表示，不能使用单引号。<br>对象的键名必须放在双引号里面。<br>数组或对象最后一个成员的后面，不能加逗号。<br>　　PS: 需要注意的是，空数组和空对象都是合格的JSON值，null本身也是一个合格的JSON值。</p>
+<h2 id="2-使用JSON"><a href="#2-使用JSON" class="headerlink" title="2.使用JSON"></a>2.使用JSON</h2><p>在JavaScript中，我们可以直接使用JSON，因为JavaScript内置了JSON的解析。把任何JavaScript对象变成JSON，就是把这个对象序列化成一个JSON格式的字符串，这样才能够通过网络传递给其他计算机。如果我们收到一个JSON格式的字符串，只需要把它反序列化成一个JavaScript对象，就可以在JavaScript中直接使用这个对象了。</p>
+<p>js对象 –》 json：stringify将js对象转化为符合json标准的字符串<br>json –》 js对象：</p>
+<ol>
+<li>‘eval’ JSON数据</li>
+<li>parse将符合json标准的字符串转化为js对象</li>
+</ol>
 
 
-                <!-- 如果开启评论功能 -->
+                <hr>
+
                 
-                    <hr>
 
+                <ul class="pager">
                     
-
+                        <li class="previous">
+                            <a href="/2018/05/03/聊聊JSONP/" data-toggle="tooltip" data-placement="top" title="聊聊JSONP">&larr; Previous Post</a>
+                        </li>
                     
-
-
                     
-
+                        <li class="next">
+                            <a href="/2018/03/07/深入this/" data-toggle="tooltip" data-placement="top" title="深入this">Next Post &rarr;</a>
+                        </li>
                     
+                </ul>
 
-
+                
 
                 
 
             </div>
+    <!-- Side Catalog Container -->
+        
+
     <!-- Sidebar Container -->
+
             <div class="
-                col-lg-3 col-lg-offset-0
-                col-md-3 col-md-offset-0
-                col-sm-12
-                col-xs-12
-                sidebar-container
-            ">
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
                 <!-- Featured Tags -->
                 
                 <section>
                     <!-- no hr -->
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
-                        
-                            
-                            <a href="/tags/#JavaScript" title="JavaScript" rel="6">JavaScript</a>
-                            
-                        
-                            
-                        
-                            
-                        
-                            
-                        
-                            
-                        
-                            
+                       
+                          <a class="tag" href="/tags/#JavaScript" title="JavaScript">JavaScript</a>
                         
                     </div>
                 </section>
                 
 
-                <!-- Short About -->
-                <section class="visible-md visible-lg">
-                    <hr><h5><a href="/about/">ABOUT ME</a></h5>
-                    <div class="short-about">
-
-                        
-                            <img src="/img/avatar.jpg" />
-                        
-
-                        
-                            <p>哈哈哈哈哈哈</p>
-                        
-
-                        <!-- SNS Link -->
-                        <ul class="list-inline">
-                            
-                            
-                            
-
-                            
-                                <li>
-                                    <a target="_blank" href="http://weibo.com/undefined">
-                                        <span class="fa-stack fa-lg">
-                                            <i class="fa fa-circle fa-stack-2x"></i>
-                                            <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
-                                        </span>
-                                    </a>
-                                </li>
-                            
-
-                            
-
-                            
-                                <li>
-                                    <a target="_blank"  href="https://github.com/Freyaww">
-                                        <span class="fa-stack fa-lg">
-                                            <i class="fa fa-circle fa-stack-2x"></i>
-                                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                                        </span>
-                                    </a>
-                                </li>
-                            
-                            
-                            
-                            
-                        </ul>
-                    </div>
-                </section>
-                
                 <!-- Friends Blog -->
                 
             </div>
-        
+
+        </div>
     </div>
-</div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
 
 
     <!-- Footer -->

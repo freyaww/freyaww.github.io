@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          深入理解float浮动 - Freya的博客 | Freya&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://freyawang.me/2019/05/04/深入理解float浮动/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">FFFussed</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Image to hack wechat -->
+<!-- <img src="https://freyawang.me/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#CSS" title="CSS">CSS</a>
+                        
+                    </div>
+                    <h1>深入理解float浮动</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by Freya Wang on
+                        2019-05-04
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p><img src="quiver-image-url/9FE7C43C4C7B12071E050115D37064AA.jpg" alt="Jietu20190702-192254@2x.jpg"></p>
+<h1 id="一、float的历史"><a href="#一、float的历史" class="headerlink" title="一、float的历史"></a>一、float的历史</h1><blockquote>
+<p>知道其历史能更容易理解事物本质。</p>
+</blockquote>
+<p>我们可以发现，目前流行采用浮动方法实现的无论是分栏布局，还是列表排列我们都可以用其他一些CSS属性（不考虑table）代替实现，唯一一个实现不了的就是“文字环绕图片”。这个替代不了的作用才是float真正的意义所在。<br>其实，浮动设计的初衷：仅仅用来实现文字环绕效果。而不是用来做布局的！不过，其因兼容性还算良好，与堆积木这种现实认知匹配，上手简单，因此在旧时代被大肆使用，也就是常说的“浮动布局”，也算阴差阳错开创了自己的一套布局。<br><img src="quiver-image-url/1358D7362FF27B7F564E4BD5E3D41CA0.jpg" alt="IMAGE"></p>
+<p>明白了浮动设计的初衷，就能明白很多浮动特有的表现了。</p>
+<h1 id="二、浮动的特性-————-包裹与破坏"><a href="#二、浮动的特性-————-包裹与破坏" class="headerlink" title="二、浮动的特性 ———— 包裹与破坏"></a>二、浮动的特性 ———— 包裹与破坏</h1><h2 id="1-包裹（对自身）"><a href="#1-包裹（对自身）" class="headerlink" title="1.包裹（对自身）"></a>1.包裹（对自身）</h2><p>包裹的表现：</p>
+<ol>
+<li>收缩：水平方向收缩为内容宽度（破坏block水平元素的流体特性）</li>
+<li>坚挺：本身会撑起来。（比如计算高度时会包括内部float元素、防止margin穿透…）</li>
+<li>隔绝：完全封闭<br>（2、3是BFC特性）</li>
+</ol>
+<blockquote>
+<p>【补充】具有包裹性的小伙伴：<br>float: left/right<br>display: inline-block/table-cell/…<br>position: absolute(近亲)/fixed/sticky<br>overflow: hidden/auto/scroll</p>
+</blockquote>
+<blockquote>
+<p>“说句您应该没有见过的结论：撇开浮动的“破坏性”，浮动就是个带有方位的display:inline-block属性。（可以联想一下多个设置float:left；的div从左到右水平排列。不会重叠的原因是BFC特性。）<br>display:inline-block某种意义上的作用就是包裹(wrap)，而浮动也有类似的效果。<br>所以类似于display:block; float:left;的CSS代码超过95%的情况是没有道理的(display:block是多余的)。<br>然而，float无法等同于display:inline-block，其中原因之一就是浮动的方向性，display:inline-block仅仅一个水平排列方向，就是从左往右，而float可以从右往左排列，这就是两者的差异。”</p>
+</blockquote>
+<h2 id="2-破坏-（对父容器）"><a href="#2-破坏-（对父容器）" class="headerlink" title="2.破坏 （对父容器）"></a>2.破坏 （对父容器）</h2><p>使父元素高度塌陷。<br>先说结论：文字之所以会环绕含有float属性的图片是因为浮动破坏了正常的line boxes。</p>
+<blockquote>
+<p>【补充】具有破坏性的小伙伴：<br>float: left/right<br>display: none<br>position: absolute(近亲)/fixed/sticky</p>
+</blockquote>
+<p>💡下面具体说说浮动的破坏性的原理<br>这里有必要先讲讲line boxes模型。先看一段HTML代码：<br><code>&lt;p&gt;这是一行普通的文字，这里有个&lt;em&gt;em&lt;/em&gt;标签。&lt;/p&gt;</code><br>这一段代码涉及到了四种boxes：</p>
+<ol>
+<li>首先是<p>标签所在的containing box，此box包含了其他的boxes；</p></li>
+<li>然后就是inline boxes，如下图：<br> <img src="quiver-image-url/1918A3E65A03F71E0AE0E5CA5947CF34.jpg" alt="IMAGE"><br> inline boxes不会让内容成块显示，而是排成一行，如果内容被inline属性标签（<span>,<a>,<cite>…）包裹,则形成inline boxes，如果是个光秃秃的文字而没有任何inline属性标签包裹，则形成匿名inline boxes。</cite></a></span></li>
+<li>line box<br> <img src="quiver-image-url/121C0AF9B5E65B7A1A8724976D77CA70.jpg" alt="IMAGE"><br> 在containing boxes中，一个一个的inline boxes组成了line boxes。这是浮动影响布局的关键box类型。</li>
+<li>content area，<br> <img src="quiver-image-url/EB9F66BA4A1A1F393626B169BC78A241.jpg" alt="IMAGE"><br> 这是一种围绕文字看不见的box，其大小与font-size大小相关。</li>
+</ol>
+<p>默认情况下，图片与文字混排应该如下图所示：图片和文字<strong>基线</strong>对齐，图片与文字在同一行上。<br><img src="quiver-image-url/93FCCE09D750FC706573768BC4722FB5.jpg" alt="IMAGE"><br>上图中，图片是一个inline boxes，两边的文字也是inline boxes。由于line boxes的高度是由其内部最高的inline boxes的高度决定的，所以这里的line boxes的高度就是图片的高度。此时图片与文字是都是inline boxes，显示的时候是基线对齐的，所以一张图片只能与一行文字对齐。<br>但是若想要一张图片与多行文字对齐，该怎么办呢？<br><strong>答</strong>：破坏正常的line boxes模型，让图片脱离出来，而不与文字进行基线对齐。</p>
+<p>给图片添加<code>float:left</code>样式后的表现：<br><img src="quiver-image-url/CA2E56D0B380277511A1DB49D2609767.jpg" alt="IMAGE"><br>刚才说过，在正常情况下，图片自身就是个inline boxes，与两侧的文字inline boxes共同组成了line boxes，但是，图片加入浮动后，情况就完全变了。浮动会彻底破坏img图片的inline boxes特性，图片不再是一个inline boxes。<strong>一旦图片失去了inline boxes特性就无法与inline boxes的文字进行基线对齐从而排成一行，并且从line boxes上脱离出来，在浮动方位的作用下，靠边排列。而其他inline boxes重新组合，环绕浮动元素排列。</strong><br>这里要注意，虽然浮动元素的inline-boxes被破坏了，但是其仍然是一个content area，所以与同样是content area实体的文字不会发生重叠。</p>
+<p>浮动元素与绝对定位元素的区别：<br>与浮动元素一样，绝对定位元素也具有“包裹性”，那么他们俩的差别在哪里呢？<br>绝对定位的元素脱离了文档流，而浮动元素依旧在文档流中。这就会导致显示上的差异：同处于文档流中的文字实体不会与浮动元素重叠，而会与绝对定位元素重叠。这就是文字环绕显示的重要原因之一：虽然图片实际占据的高度为0，但是由于其宽度实体存在（包裹性）<br>，同样是content area实体的文字不会与之重叠。<br><img src="quiver-image-url/72FAA37B8441C9FE4205213AE54DCD48.jpg" alt="IMAGE"></p>
+<h2 id="3-所以float的特性是好的吗"><a href="#3-所以float的特性是好的吗" class="headerlink" title="3.所以float的特性是好的吗"></a>3.所以float的特性是好的吗</h2><p>浮动使父元素高度塌陷，不是bug，是标准。<br>浮动的原本作用仅仅是为了实现文字环绕效果而已，特性使然。其破坏性是情非得已！</p>
+<h1 id="三、浮动与兼容性"><a href="#三、浮动与兼容性" class="headerlink" title="三、浮动与兼容性"></a>三、浮动与兼容性</h1><p>让<strong>IE7</strong>飙泪的浮动问题：<br>    1.含clear的浮动元素包裹不正确的问题<br>    2.浮动元素倒数2个莫名垂直间距问题<br>    3.浮动元素最后一个字符重复问题<br>    4.浮动元素楼梯排列问题<br>    5.浮动元素和文本不在同一行的问题<br>而在IE8+都不会出现这些问题</p>
+<h2 id="解决：合理使用浮动"><a href="#解决：合理使用浮动" class="headerlink" title="解决：合理使用浮动"></a>解决：合理使用浮动</h2><p>不使用浮动做砌砖布局</p>
+<h1 id="四、降低浮动破坏性造成的影响-————-清除浮动"><a href="#四、降低浮动破坏性造成的影响-————-清除浮动" class="headerlink" title="四、降低浮动破坏性造成的影响 ———— 清除浮动"></a>四、降低浮动破坏性造成的影响 ———— 清除浮动</h1><p>清除浮动是一种简称，实际上是清除浮动带来的影响，即破坏性（包裹性是其自身特性，不算是对其他元素的影响）。<br>所以，清除浮动其实就一个目的————解决高度塌陷的问题。<br>这里不得不重提一下为什么会产生高度塌陷。前文提到了浮动会破坏元素中内容的inline boxes，这时候若元素内没有其他实际内容时，就会发生高度塌陷。所以其实并不是只要有浮动就会有高度塌陷，并不是只要有浮动就一定要清除浮动的。</p>
+<p>那么如何清除浮动呢？<br>IE下清除浮动很简单，使元素haslayout就可以了。如宽度值、高度值、绝对定位、zoom，浮动本身都可以让元素haslayout。显然，在IE下首选<code>zoom:1;</code>，不会干扰任何样式。<br>非IE浏览器常用overflow属性，overflow:hidden或者overflow:scroll都可以，但是scroll经常会一不小心出现滚动条，所以使用hidden更多一些。由于现代浏览器都支持after伪类元素，所以常常也会用after写入一个clear属性的元素清除浮动。当然，最投机取巧的方法就是在最后直接插入一个<code>&lt;div style=&quot;clear:both;&quot;&gt;&lt;/div&gt;</code>当做最后一个子元素放到父元素那里。<br>清除浮动有三大基本方法：</p>
+<h2 id="方法一：投机取巧法"><a href="#方法一：投机取巧法" class="headerlink" title="方法一：投机取巧法"></a>方法一：投机取巧法</h2><p>在最后直接插入一个<code>&lt;div style=&quot;clear:both;&quot;&gt;&lt;/div&gt;</code>当做最后一个子元素放到父元素那里。<br>优点：兼容性强，使用方便，屡试不爽。<br>缺点：失去语义化，浪费一个标签，并且只能使用一次，不能通用，且有时一不留神中间多写了一个空格会产生一段空白高度。<br>不推荐。</p>
+<h2 id="方法二：父元素触发BFC-overflow-zoom1"><a href="#方法二：父元素触发BFC-overflow-zoom1" class="headerlink" title="方法二：父元素触发BFC overflow + zoom1"></a>方法二：父元素触发BFC overflow + zoom1</h2><p><code>.clearfix {overflow:hidden; *zoom:1;}</code><br>优点：代码简洁，兼容性强，含盖所有浏览器。<br>缺点：必须要确保不会发生溢出剪裁现象，只能局部使用，不能通用。<br>一般不用这个方法，只是有时候顺便去除浮动时会用到。</p>
+<p>注：触发BFC有很多方式：</p>
+<blockquote>
+<p>父元素BFC（IE8+） 或 haslayout（IE6/7）</p>
+<ol>
+<li>float: left/right</li>
+<li>position: absolute/fixed</li>
+<li>overflow: hidden/scroll(IE7+)</li>
+<li>display: inline-block/table-cell(IE8+)</li>
+<li>width/height/<strong>zoom:1</strong>/…(IE6/7)<br>…</li>
+</ol>
+</blockquote>
+<p>每种方式的优缺点具体参考《流体布局与BFC生成的多栏布局》。</p>
+<h2 id="方法三："><a href="#方法三：" class="headerlink" title="方法三："></a>方法三：</h2><p>所谓after，就是指在标签的最后一个子元素的后面。可以用css生成一个具有clear属性的元素，其中最关键的样式就是content。在网上搜到的最多的内容就是“.”一个点，但实际上无论你写什么内容都没问题。<br><code>.fix {*zoom: 1}
+.fix:after {display: block; content: &#39;clear&#39;; clear: both; line-height: 0; visibility: hidden;}</code><br>这里的<code>line-height:0</code>写成<code>height:0</code>也是可以的。<br>此方法综合起来最好，且不会影响其他任何样式，通用性强，覆盖面广。<br>✅推荐！</p>
+<h2 id="权衡后的策略"><a href="#权衡后的策略" class="headerlink" title="权衡后的策略"></a>权衡后的策略</h2><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* IE8以上浏览器使用伪元素 */</span></span><br><span class="line"><span class="comment">/* 第一种写法 */</span></span><br><span class="line"><span class="selector-class">.clearfix</span>:after &#123;</span><br><span class="line">    <span class="attribute">content</span>: <span class="string">''</span>;</span><br><span class="line">    <span class="attribute">display</span>: block;</span><br><span class="line">    <span class="attribute">height</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">overflow</span>: hidden;</span><br><span class="line">    <span class="attribute">clear</span>: both;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* 第二种写法 */</span></span><br><span class="line"><span class="selector-class">.clearfix</span>:after &#123;</span><br><span class="line">    <span class="attribute">content</span>: <span class="string">''</span>;</span><br><span class="line">    <span class="attribute">display</span>: table;  <span class="comment">//更简洁且兼容性没有问题</span></span><br><span class="line">    <span class="attribute">clear</span>: both;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* IE6/7使用zoom:1 */</span></span><br><span class="line"><span class="selector-class">.clearfix</span> &#123;</span><br><span class="line">    *zoom: <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>不要滥用.clearfix，应只用于那些包含浮动子元素的<strong>父级元素</strong>上。<br>乱入的haslayout往往会让IE6/7做出出格的事情！<br>浮动也会触发haslayout，再加上浮动具有破坏性，所以浮动在IE6/7下更有魔性！<br>所以要慎重使用浮动。</p>
+<h1 id="五、浮动的正确使用-————-浮动与流体布局"><a href="#五、浮动的正确使用-————-浮动与流体布局" class="headerlink" title="五、浮动的正确使用 ———— 浮动与流体布局"></a>五、浮动的正确使用 ———— 浮动与流体布局</h1><ol>
+<li><p>看家本领————文字环绕效果</p>
+</li>
+<li><p>文字环绕衍生 ———— 单侧固定<br>2.1 左浮动<br><img src="quiver-image-url/7FF50C62ADE1DA542CBB6DFEF10FF87C.jpg" alt="IMAGE"><br> float + margin-left + padding-right（头像）/left（内容）<br> float + BFC + padding-right（头像）/left（内容）</p>
+<p>2.2 右浮动<br><img src="quiver-image-url/D39D0A2355B82157674814DCCB4D6510.jpg" alt="IMAGE"><br> 若对头像使用float:right，会导致DOM顺序与渲染后所见的不同。</p>
+ <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.mib_full_float</span> &#123;<span class="attribute">width</span>: <span class="number">100%</span>; <span class="attribute">float</span>: left;&#125;</span><br><span class="line">    <span class="selector-class">.mib_feed_flow</span> &#123;<span class="attribute">margin-right</span>: <span class="number">76px</span>&#125;</span><br><span class="line"><span class="selector-class">.mib_head_img</span> &#123;<span class="attribute">width</span>: <span class="number">56px</span>; <span class="attribute">float</span>: left; <span class="attribute">margin-left</span>: -<span class="number">56px</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p> <img src="quiver-image-url/E1F11A5B5A3A794990DE326F7A58C269.jpg" alt="IMAGE"></p>
+<p> 2.3 自适应两栏布局的最佳实践</p>
+</li>
+</ol>
+<h1 id="六、float与JavaScript"><a href="#六、float与JavaScript" class="headerlink" title="六、float与JavaScript"></a>六、float与JavaScript</h1><p>float是js中的一个关键字，所以在js中调用时，不能使用<code>obj.style.float=&quot;left&quot;</code>。要使用其他方法。<br>IE浏览器：<br><code>obj.style.styleFloat=&quot;left&quot;;</code><br>其他浏览器：<br><code>obj.style.cssFloat=&quot;left&quot;;</code></p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/04/19/流体布局与BFC生成的两（多）栏布局/" data-toggle="tooltip" data-placement="top" title="流体布局与BFC特性生成的多栏布局">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#CSS" title="CSS">CSS</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/undefined">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/Freyaww">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; FFFussed 2019 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://freyawang.me/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://freyawang.me/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
