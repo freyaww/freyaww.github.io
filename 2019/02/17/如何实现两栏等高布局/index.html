@@ -13,11 +13,11 @@
 
     <title>
         
-          创建和调用函数时的动作 - Freya的博客 | Freya&#39;s Blog
+          如何实现两栏等高布局 - Freya的博客 | Freya&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="https://freyawang.me/2019/02/03/创建和调用函数时的动作/">
+    <link rel="canonical" href="https://freyawang.me/2019/02/17/如何实现两栏等高布局/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -165,14 +165,14 @@
                 <div class="post-heading">
                     <div class="tags">
                         
-                          <a class="tag" href="/tags/#JavaScript" title="JavaScript">JavaScript</a>
+                          <a class="tag" href="/tags/#CSS" title="CSS">CSS</a>
                         
                     </div>
-                    <h1>创建和调用函数时的动作</h1>
+                    <h1>如何实现两栏等高布局</h1>
                     <h2 class="subheading"></h2>
                     <span class="meta">
                         Posted by Freya on
-                        2019-02-03
+                        2019-02-17
                     </span>
                 </div>
             </div>
@@ -191,17 +191,33 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>后台的每个执行环境都有一个表示变量的对象————变量对象。全局环境的变量对象始终存在，而像普通函数这样的局部环境的变量对象，则只在函数执行过程中存在。<br>在创建函数时，会创建一个预先包含全局变量对象的作用域链，这个作用域链被保存在内部[[Scope]]属性中。<br>当这个函数被调用时，会创建一个执行环境，然后通过复制函数的[[Scope]]属性中的对象构建起执行环境的作用域链。此后，使用this（在运行时基于函数的执行环境绑定的）、arguments和其他命名参数的值来初始化函数的活动对象（activation object）（在此作为变量对象使用），并将该变量对象推入执行环境作用域的前端。</p>
+                <h1 id="一、实现"><a href="#一、实现" class="headerlink" title="一、实现"></a>一、实现</h1><p>关于如何实现两栏等高布局这种经典布局，google一下：</p>
 <blockquote>
-<p>这里要特别注意this不是固定的，而是在函数每次被调用时基于函数的执行环境重新绑定的，是动态的。（箭头函数另外讨论）</p>
+<p>给两个元素用<code>padding</code>来填充，然后用<code>margin</code>来消除<code>padding</code>带来的影响，最后给父元素加一个<code>overflow:hidden;</code>就行了。</p>
 </blockquote>
-<p>无论什么时候在函数中访问一个变量时，就会从作用域链中搜索具有相应名字的变量。<br>调用普通变量时，即直接在作用域链中搜索；调用this时，会从本函数活动对象中的this对象中找。</p>
-<blockquote>
-<p>this实质上是指向执行环境变量的指针。</p>
-</blockquote>
-<blockquote>
-<p>(this和arguments用于只会搜索到其活动对象位置，永远不可能访问外层函数中的这两个变量）</p>
-</blockquote>
+<p>👇👇👇<br>css<br><img src="quiver-image-url/A23C53E92D5642890F3CC5F3A1EDDAD3.png" alt="屏幕快照 2019-05-25 下午3.07.55.png"><br>html<br><img src="quiver-image-url/6A485ECC4F5B97ACD51DE7F54DF05882.png" alt="屏幕快照 2019-05-25 下午3.08.15.png"><br>效果如下（橘色是.father）<br><img src="quiver-image-url/54C4A3AC2BC35A6C36515123E83DBDC1.png" alt="屏幕快照 2019-05-25 下午3.15.09.png"><br>可以看到只有一行文字的左栏和有四行文字的右栏等高。<br>这种方法兼容性很好，支持IE6+。<br><br><br></p>
+<h1 id="二、原理"><a href="#二、原理" class="headerlink" title="二、原理"></a>二、原理</h1><ol>
+<li>.father设置了 <code>overflow: hidden;</code> 触发了BFC，所以即使内部的两个.son是浮动的，.father仍有高度。</li>
+<li>padding部分是会显示背景颜色的。</li>
+<li>设置 <code>padding-bottom: 600px;</code> 后，.son的高度变成 内容+padding-bottom。如果.father没有设置 <code>overflow: hidden;</code> ，则.son会显示全部高度，而设置了 <code>overflow: hidden;</code> 之后，.father的高度取决于内部内容最长（即最高）的子div的margin-bottom所在位置。这就是为什么要设置 <code>margin-bottom: -600px;</code> 的原因。</li>
+</ol>
+<p>【 总结一下 】</p>
+<ol>
+<li>.father设置  <code>overflow: hidden;</code> 的原因：<ol>
+<li>触发BFC，使.father有高度（在子元素设置了float的情况下）</li>
+<li>隐藏多出来的padding-bottom，使外观高度等于内容高度。</li>
+</ol>
+</li>
+<li>.son设置 <code>padding-bottom</code> 的原因：<ol>
+<li>设置一个比任意div.son的内容更高的高度，这样在外观上两者始终等高。（所以一般设一个大一点的值）</li>
+</ol>
+</li>
+<li>.son设置 <code>margin-bottom</code> 的原因：<ol>
+<li>为了抵消过长的 <code>padding-bottom</code>，保证.father的高度等于内容的高度。</li>
+</ol>
+</li>
+</ol>
+<h1 id="三、副作用"><a href="#三、副作用" class="headerlink" title="三、副作用"></a>三、副作用</h1><p><code>overflow: hidden</code> 会发生溢出剪裁</p>
 
 
                 <hr>
@@ -211,12 +227,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/2019/02/17/如何实现两栏等高布局/" data-toggle="tooltip" data-placement="top" title="如何实现两栏等高布局">&larr; Previous Post</a>
+                            <a href="/2019/04/19/流体布局与BFC生成的两（多）栏布局/" data-toggle="tooltip" data-placement="top" title="流体布局与BFC特性生成的多栏布局">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/2018/09/13/实现call-apply-bind/" data-toggle="tooltip" data-placement="top" title="实现call/apply/bind">Next Post &rarr;</a>
+                            <a href="/2019/02/03/创建和调用函数时的动作/" data-toggle="tooltip" data-placement="top" title="创建和调用函数时的动作">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -243,7 +259,7 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#JavaScript" title="JavaScript">JavaScript</a>
+                          <a class="tag" href="/tags/#CSS" title="CSS">CSS</a>
                         
                     </div>
                 </section>
